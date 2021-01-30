@@ -6,31 +6,32 @@ import (
 	"github.com/go-stomp/stomp"
 )
 
-type AMQHealthCheck struct {
+type AMQHealthChecker struct {
 	Conn *stomp.Conn
 	name string
 	des  string
 }
 
-func NewAMQHealthCheck(conn *stomp.Conn, name string, des string) *AMQHealthCheck {
-	if len(name) == 0 {
-		name = "amq"
-	}
-	if len(des) == 0 {
+func NewAMQHealthChecker(conn *stomp.Conn, options ...string) *AMQHealthChecker {
+	var name, des string
+	if len(options) >= 1 && len(options[0]) >= 0 {
+		des = options[0]
+	} else {
 		des = "Test::Message"
 	}
-	return &AMQHealthCheck{conn, name, des}
+	if len(options) >= 2 && len(options[1]) >= 0 {
+		name = options[1]
+	} else {
+		name = "amq"
+	}
+	return &AMQHealthChecker{conn, name, des}
 }
 
-func NewDefaultAMQHealthCheck(client *stomp.Conn, des string) *AMQHealthCheck {
-	return &AMQHealthCheck{client, "amq", des}
-}
-
-func (s *AMQHealthCheck) Name() string {
+func (s *AMQHealthChecker) Name() string {
 	return s.name
 }
 
-func (s *AMQHealthCheck) Check(ctx context.Context) (map[string]interface{}, error) {
+func (s *AMQHealthChecker) Check(ctx context.Context) (map[string]interface{}, error) {
 	res := make(map[string]interface{})
 	subscription, err := s.Conn.Subscribe(s.des, stomp.AckAuto,
 		stomp.SubscribeOpt.Header("subscription-type", "ANYCAST"),
@@ -43,7 +44,7 @@ func (s *AMQHealthCheck) Check(ctx context.Context) (map[string]interface{}, err
 	return res, err
 }
 
-func (s *AMQHealthCheck) Build(ctx context.Context, data map[string]interface{}, err error) map[string]interface{} {
+func (s *AMQHealthChecker) Build(ctx context.Context, data map[string]interface{}, err error) map[string]interface{} {
 	if err == nil {
 		return data
 	}

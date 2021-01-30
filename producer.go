@@ -28,16 +28,18 @@ func NewProducerByConfig(c Config, contentType string) (*Producer, error) {
 	return NewProducer(conn, c.DestinationName, c.SubscriptionName, contentType), nil
 }
 
-func (p *Producer) Produce(ctx context.Context, data []byte, messageAttributes *map[string]string) (string, error) {
-	opts := MapToFrame(*messageAttributes)
+func (p *Producer) Produce(ctx context.Context, data []byte, messageAttributes map[string]string) (string, error) {
+	opts := MapToFrame(messageAttributes)
 	err := p.Conn.Send(p.Destination, p.ContentType, data, opts...)
 	return "", err
 }
 
 func MapToFrame(messageAttributes map[string]string) []func(*frame.Frame) error {
 	opts := make([]func(*frame.Frame) error, 0)
-	for k, v := range messageAttributes {
-		opts = append(opts, stomp.SendOpt.Header(k, v))
+	if messageAttributes != nil {
+		for k, v := range messageAttributes {
+			opts = append(opts, stomp.SendOpt.Header(k, v))
+		}
 	}
 	return opts
 }

@@ -1,10 +1,11 @@
 package amq
 
 import (
-	"github.com/go-stomp/stomp"
-	"github.com/sirupsen/logrus"
+	"log"
 	"os"
 	"time"
+
+	"github.com/go-stomp/stomp"
 )
 
 func NewConn(userName string, password string, addr string) (*stomp.Conn, error) {
@@ -12,7 +13,7 @@ func NewConn(userName string, password string, addr string) (*stomp.Conn, error)
 	if len(userName) > 0 && len(password) > 0 {
 		clientID, err := os.Hostname()
 		if err != nil {
-			logrus.Error("Cannot get hostname", err)
+			log.Println("Cannot get hostname", err)
 		}
 		options = []func(*stomp.Conn) error{
 			stomp.ConnOpt.Login(userName, password),
@@ -28,7 +29,7 @@ func NewConnWithHeartBeat(userName string, password string, addr string, sendTim
 	if len(userName) > 0 && len(password) > 0 {
 		clientID, err := os.Hostname()
 		if err != nil {
-			logrus.Error("Cannot get hostname", err)
+			log.Println("Cannot get hostname", err)
 		}
 		options = []func(*stomp.Conn) error{
 			stomp.ConnOpt.Login(userName, password),

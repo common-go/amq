@@ -34,7 +34,7 @@ func NewConsumerByConfig(c Config, ackMode stomp.AckMode, ackOnConsume bool) (*C
 	return NewConsumer(client, c.DestinationName, c.SubscriptionName, ackMode, ackOnConsume)
 }
 
-func (c *Consumer) Consume(ctx context.Context, caller mq.ConsumerCaller) {
+func (c *Consumer) Consume(ctx context.Context, handle func(context.Context, *mq.Message, error) error) {
 	for msg := range c.Subscription.C {
 		attributes := HeaderToMap(msg.Header)
 		message := mq.Message{
@@ -45,7 +45,7 @@ func (c *Consumer) Consume(ctx context.Context, caller mq.ConsumerCaller) {
 		if c.AckOnConsume && c.AckMode != stomp.AckAuto {
 			c.Conn.Ack(msg)
 		}
-		caller.Call(ctx, &message, nil)
+		handle(ctx, &message, nil)
 	}
 }
 
