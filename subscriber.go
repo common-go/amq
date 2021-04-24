@@ -8,14 +8,14 @@ import (
 	"time"
 )
 
-type Consumer struct {
+type Subscriber struct {
 	Conn         *stomp.Conn
 	Subscription *stomp.Subscription
 	AckMode      stomp.AckMode
 	AckOnConsume bool
 }
 
-func NewConsumer(client *stomp.Conn, destinationName string, subscriptionName string, ackMode stomp.AckMode, ackOnConsume bool) (*Consumer, error) {
+func NewSubscriber(client *stomp.Conn, destinationName string, subscriptionName string, ackMode stomp.AckMode, ackOnConsume bool) (*Subscriber, error) {
 	des := destinationName + "::" + subscriptionName
 	subscription, err := client.Subscribe(des, ackMode,
 		stomp.SubscribeOpt.Header("subscription-type", "ANYCAST"),
@@ -23,18 +23,18 @@ func NewConsumer(client *stomp.Conn, destinationName string, subscriptionName st
 	if err != nil {
 		return nil, err
 	}
-	return &Consumer{Conn: client, Subscription: subscription, AckMode: ackMode, AckOnConsume: ackOnConsume}, nil
+	return &Subscriber{Conn: client, Subscription: subscription, AckMode: ackMode, AckOnConsume: ackOnConsume}, nil
 }
 
-func NewConsumerByConfig(c Config, ackMode stomp.AckMode, ackOnConsume bool) (*Consumer, error) {
+func NewSubscriberByConfig(c Config, ackMode stomp.AckMode, ackOnConsume bool) (*Subscriber, error) {
 	client, err := NewConnWithHeartBeat(c.UserName, c.Password, c.Addr, 5*time.Second, -1)
 	if err != nil {
 		return nil, err
 	}
-	return NewConsumer(client, c.DestinationName, c.SubscriptionName, ackMode, ackOnConsume)
+	return NewSubscriber(client, c.DestinationName, c.SubscriptionName, ackMode, ackOnConsume)
 }
 
-func (c *Consumer) Consume(ctx context.Context, handle func(context.Context, *mq.Message, error) error) {
+func (c *Subscriber) Subscribe(ctx context.Context, handle func(context.Context, *mq.Message, error) error) {
 	for msg := range c.Subscription.C {
 		attributes := HeaderToMap(msg.Header)
 		message := mq.Message{
