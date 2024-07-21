@@ -1,9 +1,9 @@
 # activemq
 Apache ActiveMQ is an open-source message broker written in Java, which supports a variety of messaging protocols. It is designed to facilitate communication between different applications and systems, allowing them to exchange information asynchronously and reliably. ActiveMQ is known for its robustness, flexibility, and performance, making it suitable for a wide range of use cases, from simple message queuing to complex enterprise-level messaging solutions.
 
-### Libraries for IBMMQ
-- GO: [go-stomp](https://github.com/go-stomp/stomp), to wrap and simplify [go-stomp](https://github.com/go-stomp/stomp). Example is at [go-active-mq-sample](https://github.com/project-samples/go-active-mq-sample)
-- nodejs: [activemq](https://www.npmjs.com/package/activemq), to wrap and simplify [ibmmq](https://www.npmjs.com/package/ibmmq). Example is at [activemq-sample](https://github.com/typescript-tutorial/activemq-sample)
+### Libraries for Active MQ
+- GO: [activemq](https://github.com/core-go/activemq), to wrap and simplify [go-stomp](https://github.com/go-stomp/stomp). Example is at [go-active-mq-sample](https://github.com/project-samples/go-active-mq-sample)
+- nodejs: [activemq](https://www.npmjs.com/package/activemq), to wrap and simplify [activemq](https://www.npmjs.com/package/amqplib). Example is at [activemq-sample](https://github.com/typescript-tutorial/activemq-sample)
 
 #### A common flow to consume a message from a message queue
 ![A common flow to consume a message from a message queue](https://cdn-images-1.medium.com/max/800/1*Y4QUN6QnfmJgaKigcNHbQA.png)
