@@ -1,4 +1,4 @@
-package amq
+package activemq
 
 import (
 	"context"
@@ -27,13 +27,13 @@ func NewSenderByConfig(c Config, contentType string) (*Sender, error) {
 	}
 	return NewSender(conn, c.DestinationName, c.SubscriptionName, contentType), nil
 }
-
-func (p *Sender) Send(ctx context.Context, data []byte, attributes map[string]string) (string, error) {
+func (p *Sender) SendWithFrame(ctx context.Context, data []byte, attributes map[string]string) error {
 	opts := MapToFrame(attributes)
-	err := p.Conn.Send(p.Destination, p.ContentType, data, opts...)
-	return "", err
+	return p.Conn.Send(p.Destination, p.ContentType, data, opts...)
 }
-
+func (p *Sender) Send(ctx context.Context, data []byte) error {
+	return p.Conn.Send(p.Destination, p.ContentType, data)
+}
 func MapToFrame(attributes map[string]string) []func(*frame.Frame) error {
 	opts := make([]func(*frame.Frame) error, 0)
 	if attributes != nil {
